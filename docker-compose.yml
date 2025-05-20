@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Docker/Dockerfile.backend
+    env_file:
+      - backend/.env
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/models:/app/models
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+
+  worker:
+    build:
+      context: .
+      dockerfile: Docker/Dockerfile.workers
+    env_file:
+      - backend/.env
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/models:/app/models
+    depends_on:
+      - redis
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ../Docker/Dockerfile.frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+    environment:
+      - VITE_API_URL=http://backend:8000
+    depends_on:
+      - backend
+
+  redis:
+    image: redis:7.0-alpine
+    ports:
+      - "6379:6379"

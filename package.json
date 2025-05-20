@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "mongodb": "^6.16.0",
+    "nodemailer": "^7.0.3"
+  }
+}
